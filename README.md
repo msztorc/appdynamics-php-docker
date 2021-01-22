@@ -1,12 +1,12 @@
-#### Appdynamics php-fpm docker example
+### Appdynamics php-fpm docker example
 
 Example php-agent instrumentation (nginx + php-fpm)
 
-##### Requirements
+#### Requirements
 - docker
 - docker-compose
 
-##### Configuration
+#### Configuration
 
 Create .env file and add the following environment variables
 
@@ -36,7 +36,7 @@ APPDYNAMICS_AGENT_LOG_DIR=
 
 ```
 
-##### Build
+#### Build
 
 ```bash
 $ docker-compose build --no-cache --build-arg APPD_USER=YOUR_APPDYNAMICS_LOGIN --build-arg APPD_PASS=YOUR_APPDYNAMICS_PASSWORD
@@ -44,7 +44,7 @@ $ docker-compose build --no-cache --build-arg APPD_USER=YOUR_APPDYNAMICS_LOGIN -
 
 This build will use the official php docker image (`php:7.4-fpm` by default) to build a custom image with preinstalled Appdynamics PHP agent.
 Appdynamics PHP agent will be downloaded and installed automatically in the specified version during building the image.
-##### Run
+#### Run
 ```bash
 $ docker-compose up -d
 ```
@@ -59,7 +59,7 @@ Creating appd-example-webserver ... done
 Now, you can open: http://127.0.0.1:8181/index.php
 
 
-##### Troubleshooting
+#### Troubleshooting
 ```bash
 $ docker-compose logs
 ```
