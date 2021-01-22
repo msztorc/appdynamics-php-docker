@@ -64,7 +64,7 @@ Now, you can open: http://127.0.0.1:8181/index.php
 $ docker-compose logs
 ```
 
-Enabling trace-level loggin for php agent
+Enabling trace-level logging for php agent
 
 1. Open [docker/php-fpm/appdynamics_agent_log4cxx.xml](docker/php-fpm/appdynamics_agent_log4cxx.xml)
 
@@ -78,6 +78,7 @@ Make sure the `priority` value is set to `trace`
 ```
 
 2. Open [docker/php-fpm/Dockerfile](docker/php-fpm/Dockerfile)
+
 Uncomment line:
 
 ```text
