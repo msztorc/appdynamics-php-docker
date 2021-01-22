@@ -1,0 +1,75 @@
+version: '3.8'
+services:
+
+  # php service
+  phpservice:
+    image: msztorc/phpfpm:7.4
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - APPD_USER
+        - APPD_PASS
+        - AGENT_PATH=${AGENT_PATH}
+        - AGENT_VERSION=${AGENT_VERSION}
+        - APPDYNAMICS_CONTROLLER_SSL_ENABLED=${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
+        - APPDYNAMICS_AGENT_ACCOUNT_NAME=${APPDYNAMICS_AGENT_ACCOUNT_NAME}
+        - APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+        - APPDYNAMICS_CONTROLLER_HOST_NAME=${APPDYNAMICS_CONTROLLER_HOST_NAME}
+        - APPDYNAMICS_CONTROLLER_PORT=${APPDYNAMICS_CONTROLLER_PORT}
+        - APPDYNAMICS_AGENT_APPLICATION_NAME=${APPDYNAMICS_AGENT_APPLICATION_NAME}
+        - APPDYNAMICS_AGENT_TIER_NAME=${APPDYNAMICS_AGENT_TIER_NAME}
+        - APPDYNAMICS_AGENT_NODE_NAME=${APPDYNAMICS_AGENT_NODE_NAME}
+        - APPDYNAMICS_HTTP_PROXY_HOST=${APPDYNAMICS_HTTP_PROXY_HOST}
+        - APPDYNAMICS_HTTP_PROXY_PORT=${APPDYNAMICS_HTTP_PROXY_PORT}
+        - APPDYNAMICS_HTTP_PROXY_USER=${APPDYNAMICS_HTTP_PROXY_USER}
+        - APPDYNAMICS_HTTP_PROXY_PASSWORD_FILE=${APPDYNAMICS_HTTP_PROXY_PASSWORD_FILE}
+        - APPDYNAMICS_AGENT_LOG_DIR=${APPDYNAMICS_AGENT_LOG_DIR}
+    container_name: "appd-example-app"
+    tty: true
+    volumes:
+      - web-vol-1:/var/www/app/
+    working_dir: /var/www/app/
+    env_file: ./.env
+    environment:
+      SERVICE_NAME: php
+      SERVICE_TAGS: dev
+      LOG_LINES: 9999:-9999
+    restart: always
+    networks:
+      app-network:
+        aliases:
+          - phpservice
+
+  # nginx Service
+  webservice:
+    image: msztorc/nginx
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    container_name: "appd-example-webserver"
+    restart: always
+    tty: true
+    volumes:
+      - web-vol-1:/var/www/app/
+    environment:
+      SERVICE_NAME: webservice
+    ports:
+      - "8181:80"
+    networks:
+      - app-network
+
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "appd-bridge"
+
+# Volumes
+volumes:
+  web-vol-1:
+    driver_opts:
+      type: none
+      device: ./app/
+      o: bind
